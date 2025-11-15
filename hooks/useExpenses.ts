@@ -22,6 +22,15 @@ export function useExpenses() {
 
       setReady(true);
     })();
+    (async () => {
+      const existing = await getAll();
+      if (existing.length === 0) {
+        // Bảng trống, insert dữ liệu mẫu
+        await add("Cà phê", 30000, "Đồ uống");
+        await add("Ăn trưa", 50000, "Ăn uống");
+        await add("Đi lại", 20000, "Di chuyển");
+      }
+    })();
   }, []);
 
   const getAll = async () => {
@@ -32,7 +41,7 @@ export function useExpenses() {
   const add = async (
     title: string,
     amount: number,
-    category: string | null = null,
+    category: string | null = null
   ) => {
     if (!db) return;
     const timestamp = Date.now();
