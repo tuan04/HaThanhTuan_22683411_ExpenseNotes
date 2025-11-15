@@ -21,7 +21,7 @@ export default function ExpensesItem({
         padding: 10,
         flexDirection: "row",
         justifyContent: "space-between",
-        borderColor: expenses.paid === 0 ? "red" : "green"
+        borderColor: expenses.paid === 1 ? "red" : "green"
       }}
     >
       <Text
@@ -30,7 +30,7 @@ export default function ExpensesItem({
           textDecorationLine: expenses.paid === 1 ? "line-through" : "none",
         }}
       >
-        {expenses.title} - {formatVND(expenses.amount)} - {expenses.category} - {expenses.paid === 1 ? "Đã trả" : "Chưa trả"}
+        {expenses.title} - {formatVND(expenses.amount)} - {expenses.category} - {expenses.paid === 0 ? "Đã trả" : "Chưa trả"}
       </Text>
       <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
         <TouchableOpacity>

@@ -1,4 +1,5 @@
 // import AddModal from "@/component/AddModal";
+import EditModal from "@/component/EditModal";
 import ExpensesItem from "@/component/ExpensesItem";
 import { useExpenses } from "@/hooks/useExpenses";
 import { Expenses } from "@/type/types";
@@ -8,7 +9,8 @@ import {
   FlatList,
   StyleSheet,
   Text,
-  View
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -26,6 +28,23 @@ export default function Index() {
     fetchExpenses();
   }, [getAll]);
 
+  const onOpenAddModal = () => {
+    setShowAddModal(true);
+  };
+
+  const onSubmitAdd = async (
+    title: string,
+    amount: number,
+    category: string
+  ) => {
+    try {
+      await add(title, amount, category);
+      setTodos((await getAll()) as Expenses[]);
+      setShowAddModal(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   if (!ready) {
     return (
@@ -37,20 +56,28 @@ export default function Index() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {showAddModal ? (
+        <EditModal
+          onSubmit={onSubmitAdd}
+          onClose={() => setShowAddModal(false)}
+        />
+      ) : (
+        ""
+      )}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Expense Notes</Text>
       </View>
-
+      <View style={{ padding: 10 }}>
+        <TouchableOpacity style={styles.addBtn} onPress={onOpenAddModal}>
+          <Text style={styles.buttonText}>Thêm Todo</Text>
+        </TouchableOpacity>
+      </View>
       <View style={{ width: "100%" }}>
         {todos.length > 0 ? (
           <FlatList
             contentContainerStyle={{ gap: 10 }}
             data={todos}
-            renderItem={({ item }) => (
-              <ExpensesItem
-                expenses={item}
-              />
-            )}
+            renderItem={({ item }) => <ExpensesItem expenses={item} />}
             keyExtractor={(_, index) => index.toString()}
           />
         ) : (
