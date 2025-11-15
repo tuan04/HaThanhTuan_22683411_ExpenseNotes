@@ -3,16 +3,17 @@ import { Expenses } from "@/type/types";
 import { EvilIcons, Feather } from "@expo/vector-icons";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-
-type ExpensesItemProps = {
+type Props = {
   expenses: Expenses;
   onChangeStatusPaid: (id: number) => void;
+  onEdit: () => void;
 };
 
 export default function ExpensesItem({
   expenses,
   onChangeStatusPaid,
-}: ExpensesItemProps) {
+  onEdit
+}: Props) {
   return (
     <TouchableOpacity
       onPress={() => onChangeStatusPaid(expenses.id)}
@@ -36,7 +37,7 @@ export default function ExpensesItem({
         {expenses.paid === 0 ? "Đã trả" : "Đang nợ"}
       </Text>
       <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={onEdit}>
           <Feather name="edit" size={21} color="black" />
         </TouchableOpacity>
         <TouchableOpacity>

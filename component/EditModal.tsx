@@ -14,71 +14,94 @@ import {
 type AddModalProps = {
   onClose: () => void;
   onSubmit: (title: string, amount: number, category: string) => void;
-  expense?: Expenses;
+  expense?: Expenses | null;
 };
 
-export default function EditModal({
-  onClose,
-  onSubmit,
-  expense,
-}: AddModalProps) {
+export default function EditModal({ onClose, onSubmit, expense }: AddModalProps) {
   const [title, setTitle] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [category, setCategory] = useState<string>("");
 
+  // Fill dữ liệu nếu đang edit
   useEffect(() => {
     if (expense) {
       setTitle(expense.title);
+      setAmount(expense.amount);
+      setCategory(expense.category || "");
+    } else {
+      // Reset khi thêm mới
+      setTitle("");
+      setAmount(0);
+      setCategory("");
     }
   }, [expense]);
 
   const onSubmitHandle = () => {
-    if (title === "") {
+    if (title.trim() === "") {
       Alert.alert("Hãy nhập title");
-    } else if (amount <= 0 || amount == null) {
-      Alert.alert("Amount phải lớn hơn 0");
-    } else {
-      onSubmit(title, amount, category);
+      return;
     }
+
+    if (!amount || amount <= 0) {
+      Alert.alert("Amount phải lớn hơn 0");
+      return;
+    }
+
+    onSubmit(title, amount, category);
   };
 
   return (
-    <Modal transparent={true} animationType="fade" onRequestClose={onClose}>
-      <TouchableWithoutFeedback onPress={onClose} >
+    <Modal transparent animationType="fade" onRequestClose={onClose}>
+      <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.container}>
           <TouchableWithoutFeedback>
             <View style={styles.modal}>
-              <Text style={styles.title}>Add Expense</Text>
-              {/* Các input hoặc nội dung thêm */}
+              <Text style={styles.title}>
+                {expense ? "Cập nhật Expense" : "Thêm Expense"}
+              </Text>
+
+              {/* Title */}
               <View>
-                <Text style={{ fontSize: 18 }}>Title:</Text>
+                <Text style={styles.label}>Title:</Text>
                 <TextInput
-                  onChangeText={(value) => setTitle(value)}
+                  value={title}
+                  onChangeText={setTitle}
                   style={styles.input}
-                  placeholder="Nhập tên khoản chi....."
-                ></TextInput>
-              </View>
-              <View>
-                <Text style={{ fontSize: 18 }}>Amout:</Text>
-                <TextInput
-                  onChangeText={(value) => setAmount(Number.parseFloat(value))}
-                  style={styles.input}
-                  placeholder="Nhập số tiền....."
-                ></TextInput>
-              </View>
-              <View>
-                <Text style={{ fontSize: 18 }}>Category:</Text>
-                <TextInput
-                  onChangeText={(value) => setCategory(value)}
-                  style={styles.input}
-                  placeholder="Nhập loại....."
-                ></TextInput>
+                  placeholder="Nhập tên khoản chi..."
+                />
               </View>
 
+              {/* Amount */}
+              <View>
+                <Text style={styles.label}>Amount:</Text>
+                <TextInput
+                  value={amount.toString()}
+                  onChangeText={(value) =>
+                    setAmount(Number.parseFloat(value) || 0)
+                  }
+                  style={styles.input}
+                  placeholder="Nhập số tiền..."
+                  keyboardType="numeric"
+                />
+              </View>
+
+              {/* Category */}
+              <View>
+                <Text style={styles.label}>Category:</Text>
+                <TextInput
+                  value={category}
+                  onChangeText={setCategory}
+                  style={styles.input}
+                  placeholder="Nhập loại..."
+                />
+              </View>
+
+              {/* Buttons */}
               <View style={styles.buttons}>
                 <TouchableOpacity style={styles.button} onPress={onClose}>
                   <Text style={styles.buttonText}>Hủy</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity
                   style={[styles.button, styles.addButton]}
                   onPress={onSubmitHandle}
@@ -109,20 +132,27 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 12,
     padding: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
     elevation: 5,
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 6,
+    borderColor: "#ccc",
+    padding: 8,
   },
   buttons: {
     flexDirection: "row",
     justifyContent: "flex-end",
+    marginTop: 10,
     gap: 10,
   },
   button: {
@@ -135,14 +165,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#4CAF50",
   },
   buttonText: {
-    color: "#000",
     fontWeight: "bold",
+    color: "#000",
   },
   addButtonText: {
     color: "#fff",
-  },
-  input: {
-    borderWidth: 1,
-    borderRadius: 4,
   },
 });

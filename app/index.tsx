@@ -15,9 +15,11 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const { add, changePaidStatus, getAll, ready, remove } = useExpenses();
+  const { add, changePaidStatus, getAll, ready, remove, update } =
+    useExpenses();
   const [expenses, setExpenses] = useState<Expenses[]>([]);
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
+  const [editingExpense, setEditingExpense] = useState<Expenses | null>(null);
 
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -29,16 +31,24 @@ export default function Index() {
   }, [getAll]);
 
   const onOpenAddModal = () => {
+    setEditingExpense(null);
     setShowAddModal(true);
   };
 
-  const onSubmitAdd = async (
-    title: string,
-    amount: number,
-    category: string
-  ) => {
+  const onOpenEditModal = (expense: Expenses) => {
+    setEditingExpense(expense);
+    setShowAddModal(true);
+  };
+  const onSubmit = async (title: string, amount: number, category: string) => {
     try {
-      await add(title, amount, category);
+      if (editingExpense) {
+        // UPDATE
+        await update(editingExpense.id, title, amount, category);
+      } else {
+        // ADD
+        await add(title, amount, category);
+      }
+
       setExpenses((await getAll()) as Expenses[]);
       setShowAddModal(false);
     } catch (e) {
@@ -65,13 +75,12 @@ export default function Index() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {showAddModal ? (
+      {showAddModal && (
         <EditModal
-          onSubmit={onSubmitAdd}
+          onSubmit={onSubmit}
           onClose={() => setShowAddModal(false)}
+          expense={editingExpense}
         />
-      ) : (
-        ""
       )}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Expense Notes</Text>
@@ -86,7 +95,13 @@ export default function Index() {
           <FlatList
             contentContainerStyle={{ gap: 10 }}
             data={expenses}
-            renderItem={({ item }) => <ExpensesItem onChangeStatusPaid={onUpdatePaid} expenses={item} />}
+            renderItem={({ item }) => (
+              <ExpensesItem
+                expenses={item}
+                onChangeStatusPaid={onUpdatePaid}
+                onEdit={() => onOpenEditModal(item)}
+              />
+            )}
             keyExtractor={(_, index) => index.toString()}
           />
         ) : (

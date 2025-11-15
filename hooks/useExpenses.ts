@@ -56,6 +56,19 @@ export function useExpenses() {
     await db.runAsync("DELETE FROM expenses WHERE id = ?", [id]);
   };
 
+  const update = async (
+    id: number,
+    title: string,
+    amount: number,
+    category: string
+  ) => {
+    if (!db) return;
+    await db.runAsync(
+      "UPDATE expenses SET title = ?, amount = ?, category = ? WHERE id = ?",
+      [title, amount, category, id]
+    );
+  };
+
   const changePaidStatus = async (id: number) => {
     if (!db) return;
     await db.runAsync(
@@ -64,5 +77,5 @@ export function useExpenses() {
     );
   };
 
-  return { ready, getAll, add, remove, changePaidStatus };
+  return { ready, getAll, add, remove, changePaidStatus, update };
 }
