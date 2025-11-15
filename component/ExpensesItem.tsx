@@ -1,3 +1,4 @@
+import { formatVND } from "@/helpers/formatCurrency";
 import { Expenses } from "@/type/types";
 import { EvilIcons, Feather } from "@expo/vector-icons";
 import React from "react";
@@ -20,6 +21,7 @@ export default function ExpensesItem({
         padding: 10,
         flexDirection: "row",
         justifyContent: "space-between",
+        borderColor: expenses.paid === 0 ? "red" : "green"
       }}
     >
       <Text
@@ -28,7 +30,7 @@ export default function ExpensesItem({
           textDecorationLine: expenses.paid === 1 ? "line-through" : "none",
         }}
       >
-        {expenses.title} - {expenses.amount}
+        {expenses.title} - {formatVND(expenses.amount)} - {expenses.category} - {expenses.paid === 1 ? "Đã trả" : "Chưa trả"}
       </Text>
       <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
         <TouchableOpacity>

@@ -57,7 +57,7 @@ export default function Index() {
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
-            <Text style={{ fontSize: 15 }}>Chưa có công việc</Text>
+            <Text style={{ fontSize: 15 }}>Chưa có khoản chi tiêu nào.</Text>
           </View>
         )}
       </View>
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   header: {
+    marginBottom: 10,
     padding: 20,
     backgroundColor: "#682AEF",
 
