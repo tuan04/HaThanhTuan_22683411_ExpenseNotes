@@ -6,14 +6,16 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 type ExpensesItemProps = {
   expenses: Expenses;
+  onChangeStatusPaid: (id: number) => void;
 };
 
 export default function ExpensesItem({
   expenses,
+  onChangeStatusPaid,
 }: ExpensesItemProps) {
-
   return (
     <TouchableOpacity
+      onPress={() => onChangeStatusPaid(expenses.id)}
       style={{
         width: "100%",
         borderWidth: 1,
@@ -21,7 +23,7 @@ export default function ExpensesItem({
         padding: 10,
         flexDirection: "row",
         justifyContent: "space-between",
-        borderColor: expenses.paid === 1 ? "red" : "green"
+        borderColor: expenses.paid === 1 ? "red" : "green",
       }}
     >
       <Text
@@ -30,7 +32,8 @@ export default function ExpensesItem({
           textDecorationLine: expenses.paid === 1 ? "line-through" : "none",
         }}
       >
-        {expenses.title} - {formatVND(expenses.amount)} - {expenses.category} - {expenses.paid === 0 ? "Đã trả" : "Chưa trả"}
+        {expenses.title} - {formatVND(expenses.amount)} - {expenses.category} -{" "}
+        {expenses.paid === 0 ? "Đã trả" : "Đang nợ"}
       </Text>
       <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
         <TouchableOpacity>

@@ -16,13 +16,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const { add, changePaidStatus, getAll, ready, remove } = useExpenses();
-  const [todos, setTodos] = useState<Expenses[]>([]);
+  const [expenses, setExpenses] = useState<Expenses[]>([]);
   const [showAddModal, setShowAddModal] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchExpenses = async () => {
-      const fetchedTodos = (await getAll()) as Expenses[];
-      setTodos(fetchedTodos);
+      const fetchExpenses = (await getAll()) as Expenses[];
+      setExpenses(fetchExpenses);
     };
 
     fetchExpenses();
@@ -39,8 +39,17 @@ export default function Index() {
   ) => {
     try {
       await add(title, amount, category);
-      setTodos((await getAll()) as Expenses[]);
+      setExpenses((await getAll()) as Expenses[]);
       setShowAddModal(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const onUpdatePaid = async (id: number) => {
+    try {
+      await changePaidStatus(id);
+      setExpenses((await getAll()) as Expenses[]);
     } catch (e) {
       console.log(e);
     }
@@ -69,15 +78,15 @@ export default function Index() {
       </View>
       <View style={{ padding: 10 }}>
         <TouchableOpacity style={styles.addBtn} onPress={onOpenAddModal}>
-          <Text style={styles.buttonText}>Thêm Todo</Text>
+          <Text style={styles.buttonText}>Thêm Expense</Text>
         </TouchableOpacity>
       </View>
       <View style={{ width: "100%" }}>
-        {todos.length > 0 ? (
+        {expenses.length > 0 ? (
           <FlatList
             contentContainerStyle={{ gap: 10 }}
-            data={todos}
-            renderItem={({ item }) => <ExpensesItem expenses={item} />}
+            data={expenses}
+            renderItem={({ item }) => <ExpensesItem onChangeStatusPaid={onUpdatePaid} expenses={item} />}
             keyExtractor={(_, index) => index.toString()}
           />
         ) : (

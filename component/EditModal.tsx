@@ -44,12 +44,12 @@ export default function EditModal({
 
   return (
     <Modal transparent={true} animationType="fade" onRequestClose={onClose}>
-      <TouchableWithoutFeedback onPress={onClose}>
+      <TouchableWithoutFeedback onPress={onClose} >
         <View style={styles.container}>
           <TouchableWithoutFeedback>
             <View style={styles.modal}>
               <Text style={styles.title}>Add Expense</Text>
-              {/* Các input hoặc nội dung thêm Todo */}
+              {/* Các input hoặc nội dung thêm */}
               <View>
                 <Text style={{ fontSize: 18 }}>Title:</Text>
                 <TextInput
