@@ -7,12 +7,14 @@ type Props = {
   expenses: Expenses;
   onChangeStatusPaid: (id: number) => void;
   onEdit: () => void;
+  onDelete: (id: number) => void;
 };
 
 export default function ExpensesItem({
   expenses,
   onChangeStatusPaid,
-  onEdit
+  onEdit,
+  onDelete
 }: Props) {
   return (
     <TouchableOpacity
@@ -30,7 +32,7 @@ export default function ExpensesItem({
       <Text
         style={{
           fontSize: 15,
-          textDecorationLine: expenses.paid === 1 ? "line-through" : "none",
+          textDecorationLine: expenses.paid === 0 ? "line-through" : "none",
         }}
       >
         {expenses.title} - {formatVND(expenses.amount)} - {expenses.category} -{" "}
@@ -40,7 +42,7 @@ export default function ExpensesItem({
         <TouchableOpacity onPress={onEdit}>
           <Feather name="edit" size={21} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => onDelete(expenses.id)}>
           <EvilIcons name="trash" size={26} color="red" />
         </TouchableOpacity>
       </View>

@@ -6,6 +6,7 @@ import { Expenses } from "@/type/types";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StyleSheet,
   Text,
@@ -65,6 +66,32 @@ export default function Index() {
     }
   };
 
+  const onDelete = async (id: number) => {
+    Alert.alert(
+      "Xác nhận xoá",
+      "Bạn có chắc chắn muốn xoá khoản chi tiêu này?",
+      [
+        {
+          text: "Hủy",
+          style: "cancel",
+        },
+        {
+          text: "Xoá",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await remove(id);
+              setExpenses((await getAll()) as Expenses[]);
+            } catch (e) {
+              console.log(e);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   if (!ready) {
     return (
       <SafeAreaView>
@@ -97,6 +124,7 @@ export default function Index() {
             data={expenses}
             renderItem={({ item }) => (
               <ExpensesItem
+                onDelete={onDelete}
                 expenses={item}
                 onChangeStatusPaid={onUpdatePaid}
                 onEdit={() => onOpenEditModal(item)}
